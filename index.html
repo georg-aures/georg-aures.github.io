@@ -18,11 +18,12 @@
         padding: 20px;
     }
     h1 {
-             color: #333;
-             text-align: center;
+        color: #333;
+        text-align: center;
     }
     h2 {
-             color: #333;
+        color: #333;
+        text-align: left;
     }
     .gallery {
         display: grid;
@@ -63,7 +64,6 @@
     .contact-form button:hover {
         background-color: #4a8;
     }
-    /* Lightbox Styles */
     .lightbox {
         display: none;
         position: fixed;
@@ -75,16 +75,19 @@
         z-index: 1000;
     }
     .lightbox-content {
+        position: relative;
         background: white;
         padding: 20px;
         border-radius: 8px;
         max-width: 80%;
         max-height: 80%;
-        overflow-y: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     .lightbox img {
-        width: 100%;
-        margin-bottom: 10px;
+        max-width: 100%;
+        max-height: 70vh;
         border-radius: 8px;
     }
     .close-btn {
@@ -95,6 +98,20 @@
         color: white;
         cursor: pointer;
     }
+    .nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 40px;
+        color: white;
+        background: rgba(0,0,0,0.4);
+        border: none;
+        cursor: pointer;
+        padding: 10px;
+        border-radius: 50%;
+    }
+    .prev-btn { left: 20px; }
+    .next-btn { right: 20px; }
     @media (max-width: 600px) {
         .container { padding: 10px; }
         .gallery img { height: 120px; }
@@ -134,18 +151,18 @@
     </div>
 </div>
 
-<!-- Lightbox for Galleries -->
 <div class="lightbox" id="lightbox">
     <span class="close-btn" onclick="closeLightbox()">&times;</span>
-    <div class="lightbox-content" id="lightbox-content">
-        <!-- Images will be loaded dynamically -->
+    <button class="nav-btn prev-btn" onclick="changeImage(-1)">&lt;</button>
+    <div class="lightbox-content">
+        <img id="lightbox-image" src="" alt="Gallery image">
     </div>
+    <button class="nav-btn next-btn" onclick="changeImage(1)">&gt;</button>
 </div>
 
 <script>
-function openGallery(room) {
-    const images = {
-        'living-room': [
+const imageData = {
+    'living-room': [
             'https://raw.githubusercontent.com/munich-casa/munich-casa.github.io/refs/heads/main/living_room.png',
             'https://placehold.co/600x400/png?text=Living+Room+Detail+1',
             'https://placehold.co/600x400/png?text=Living+Room+Detail+2'
@@ -166,13 +183,28 @@ function openGallery(room) {
             'https://placehold.co/600x400/png?text=Bathroom+Detail+2'
         ]
     };
-    const lightboxContent = document.getElementById('lightbox-content');
-    lightboxContent.innerHTML = images[room].map(img => `<img src="${img}">`).join('');
+
+let currentImages = [];
+let currentIndex = 0;
+
+function openGallery(room) {
+    currentImages = imageData[room];
+    currentIndex = 0;
+    updateLightbox();
     document.getElementById('lightbox').style.display = 'flex';
 }
 
 function closeLightbox() {
     document.getElementById('lightbox').style.display = 'none';
+}
+
+function updateLightbox() {
+    document.getElementById('lightbox-image').src = currentImages[currentIndex];
+}
+
+function changeImage(direction) {
+    currentIndex = (currentIndex + direction + currentImages.length) % currentImages.length;
+    updateLightbox();
 }
 </script>
 
